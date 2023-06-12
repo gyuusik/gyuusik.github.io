@@ -1,9 +1,9 @@
 import { KeyValue } from '../../lib/keyboard'
 import { getStatuses } from '../../lib/statuses'
 import { Key } from './Key'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { ORTHOGRAPHY } from '../../constants/orthography'
-import { useTranslation } from 'react-i18next'
+// import { useTranslation } from 'react-i18next'
 
 type Props = {
   onChar: (value: string) => void
@@ -13,8 +13,13 @@ type Props = {
 }
 
 export const Keyboard = ({ onChar, onDelete, onEnter, guesses }: Props) => {
-  const { t } = useTranslation()
+  // const { t } = useTranslation()
+  const [isShiftPressed, setIsShiftPressed] = useState(false)
   const charStatuses = getStatuses(guesses)
+
+  const onShift = () => {
+    setIsShiftPressed(prev => !prev)
+  }
 
   const onClick = (value: KeyValue) => {
     if (value === 'ENTER') {
@@ -23,6 +28,7 @@ export const Keyboard = ({ onChar, onDelete, onEnter, guesses }: Props) => {
       onDelete()
     } else {
       onChar(value)
+      setIsShiftPressed(false)
     }
   }
 
@@ -47,24 +53,32 @@ export const Keyboard = ({ onChar, onDelete, onEnter, guesses }: Props) => {
     }
   }, [onEnter, onDelete, onChar])
 
+  const [keySliceStartIdx, keySliceEndIdx] = isShiftPressed ? [26, ORTHOGRAPHY.length] : [0, 10];
+
   return (
     <div>
       <div className="flex justify-center mb-1">
-        {ORTHOGRAPHY.slice(0, Math.floor(ORTHOGRAPHY.length * 0.4)).map(
-          (char) => (
+        {ORTHOGRAPHY.slice(keySliceStartIdx, keySliceEndIdx).map(
+          (char) => {
+            console.log(char);
+            return (
             <Key
               key={char}
               value={char}
               onClick={onClick}
               status={charStatuses[char]}
             />
-          )
+          )}
         )}
+        <Key key="deleteKey" width={65.4} value="DELETE" onClick={onClick}>
+          삭제
+        </Key>
       </div>
+
       <div className="flex justify-center mb-1">
         {ORTHOGRAPHY.slice(
-          Math.floor(ORTHOGRAPHY.length * 0.4),
-          Math.floor(ORTHOGRAPHY.length * 0.7)
+          10,
+          19
         ).map((char) => (
           <Key
             key={char}
@@ -73,14 +87,18 @@ export const Keyboard = ({ onChar, onDelete, onEnter, guesses }: Props) => {
             status={charStatuses[char]}
           />
         ))}
-      </div>
-      <div className="flex justify-center">
         <Key key="enterKey" width={65.4} value="ENTER" onClick={onClick}>
-          {t('enterKey')}
+          엔터
+        </Key>
+      </div>
+
+      <div className="flex justify-center">
+        <Key key="enterKey" width={65.4} value="ENTER" onClick={onShift}>
+          쉬프트
         </Key>
         {ORTHOGRAPHY.slice(
-          Math.floor(ORTHOGRAPHY.length * 0.7),
-          ORTHOGRAPHY.length
+          19,
+          26
         ).map((char) => (
           <Key
             key={char}
@@ -89,8 +107,8 @@ export const Keyboard = ({ onChar, onDelete, onEnter, guesses }: Props) => {
             status={charStatuses[char]}
           />
         ))}
-        <Key key="deleteKey" width={65.4} value="DELETE" onClick={onClick}>
-          {t('deleteKey')}
+        <Key key="enterKey" width={65.4} value="ENTER" onClick={onShift}>
+          쉬프트
         </Key>
       </div>
     </div>

@@ -34,9 +34,11 @@ const App: React.FC<WithTranslation> = ({ t, i18n }) => {
   const [isI18nModalOpen, setIsI18nModalOpen] = useState(false)
   const [isWordNotFoundAlertOpen, setIsWordNotFoundAlertOpen] = useState(false)
   const [isGameLost, setIsGameLost] = useState(false)
+
   const [successAlert, setSuccessAlert] = useState('')
   const [guesses, setGuesses] = useState<string[][]>(() => {
     const loaded = loadGameStateFromLocalStorage()
+
     if (loaded?.solution !== solution) {
       return []
     }
@@ -58,6 +60,12 @@ const App: React.FC<WithTranslation> = ({ t, i18n }) => {
     ReactGA.pageview(window.location.pathname)
   }
   const [stats, setStats] = useState(() => loadStats())
+
+  const resetGame = () => {
+    setGuesses([])
+    setIsGameWon(false)
+    setIsGameLost(false)
+  }
 
   useEffect(() => {
     saveGameStateToLocalStorage({ guesses, solution })
@@ -107,12 +115,13 @@ const App: React.FC<WithTranslation> = ({ t, i18n }) => {
       }, ALERT_TIME_MS)
     }
 
-    if (!isWordInWordList(currentGuess.join(''))) {
-      setIsWordNotFoundAlertOpen(true)
-      return setTimeout(() => {
-        setIsWordNotFoundAlertOpen(false)
-      }, ALERT_TIME_MS)
-    }
+    // if (!isWordInWordList(currentGuess.join(''))) {
+    //   setIsWordNotFoundAlertOpen(true)
+    //   return setTimeout(() => {
+    //     setIsWordNotFoundAlertOpen(false)
+    //   }, ALERT_TIME_MS)
+    // }
+
     const winningWord = isWinningWord(currentGuess.join(''))
 
     if (
@@ -159,6 +168,7 @@ const App: React.FC<WithTranslation> = ({ t, i18n }) => {
           className="h-6 w-6 cursor-pointer"
           onClick={() => setIsStatsModalOpen(true)}
         />
+        <button onClick={resetGame}>리셋</button>
       </div>
       <Grid guesses={guesses} currentGuess={currentGuess} />
       <Keyboard
