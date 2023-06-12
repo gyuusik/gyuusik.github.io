@@ -9,7 +9,7 @@ import { AboutModal } from './components/modals/AboutModal'
 import { InfoModal } from './components/modals/InfoModal'
 import { StatsModal } from './components/modals/StatsModal'
 import { TranslateModal } from './components/modals/TranslateModal'
-import { isWordInWordList, isWinningWord, solution } from './lib/words'
+import { isWinningWord, solution } from './lib/words'
 import { addStatsForCompletedGame, loadStats } from './lib/stats'
 import {
   loadGameStateFromLocalStorage,
@@ -32,7 +32,7 @@ const App: React.FC<WithTranslation> = ({ t, i18n }) => {
   const [isNotEnoughLetters, setIsNotEnoughLetters] = useState(false)
   const [isStatsModalOpen, setIsStatsModalOpen] = useState(false)
   const [isI18nModalOpen, setIsI18nModalOpen] = useState(false)
-  const [isWordNotFoundAlertOpen, setIsWordNotFoundAlertOpen] = useState(false)
+  // const [isWordNotFoundAlertOpen, setIsWordNotFoundAlertOpen] = useState(false)
   const [isGameLost, setIsGameLost] = useState(false)
 
   const [successAlert, setSuccessAlert] = useState('')
@@ -211,7 +211,7 @@ const App: React.FC<WithTranslation> = ({ t, i18n }) => {
       </button>
 
       <Alert message={t('notEnoughLetters')} isOpen={isNotEnoughLetters} />
-      <Alert message={t('wordNotFound')} isOpen={isWordNotFoundAlertOpen} />
+      {/*<Alert message={t('wordNotFound')} isOpen={isWordNotFoundAlertOpen} />*/}
       <Alert message={t('solution', { solution })} isOpen={isGameLost} />
       <Alert
         message={successAlert}
